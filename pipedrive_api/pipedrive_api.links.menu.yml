@@ -1,0 +1,6 @@
+pipedrive_api.admin:
+  route_name: pipedrive_api.admin
+  title: 'PipeDrive API Pull'
+  parent: system.admin_config_development
+  decription: 'Pulls leads and people from PipeDrive to be imported into Mailchimp.'
+  menu_name: devel 

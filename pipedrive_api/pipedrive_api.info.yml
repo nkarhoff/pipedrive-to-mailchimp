@@ -1,0 +1,8 @@
+name: PipeDrive API
+description: Pulls in leads from PipeDrive so they can be loaded into Mailchimp.
+package: Custom
+
+type: module
+core: 8.x
+core_version_requirement: ^8 || ^9
+

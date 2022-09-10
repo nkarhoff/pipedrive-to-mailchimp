@@ -1,0 +1,7 @@
+pipedrive_api.admin:
+  path: 'admin/config/development/pipedrive-api'
+  defaults:
+    _title: 'PipeDrive Settings'
+    _form: '\Drupal\pipedrive_api\Form\PipedriveAPIForm'
+  requirements:
+    _permission: 'access pipedrive api form'

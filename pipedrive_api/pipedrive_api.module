@@ -1,0 +1,73 @@
+<?php 
+
+use Drupal\pipedrive_api\PipedriveQueue;
+
+
+	function pipedrive_api_cron() { 
+		
+	  $t=time();
+	  
+
+	  // If the hour is even, pull from pipedrive
+	  if (date('H') % 2 == 0)
+	  {
+	  	  // Get Queue
+	  	  
+		  $queue = \Drupal::queue('pipedrive_queue');
+			
+		  // Get Last Pull 
+		  $last_pull = \Drupal::config('pipedrive_api.settings')->get('last_pull');
+
+		  // Start a new Pipedrive pull
+		  $pull = new PipedriveQueue();
+		  $new_queue = $pull->pipedrive_pull($last_pull);
+
+		  
+		  foreach ($new_queue as $key => $person) {
+		    $deal_title = $person['name'];
+		    $email = $person['email'][0]['value'];
+		    $org = $person['org_name'];
+		    $label = $person['label'];
+		    $first_name = $person['first_name'];
+		    $last_name = $person['last_name'];
+		    $addedtags = $person['addedtags'];
+		    
+		    $added = $person['add_time'];
+		    $added = strtotime($added);
+		    $updated = $person['update_time'];
+		    $updated = strtotime($updated);
+
+		    if ($label == '5') {
+		    	$labeltext = 'Customer';
+		    } else if ($label == '6') {
+		    	$labeltext = 'Hot Lead';
+		    } else if ($label == '7') {
+		    	$labeltext = 'Warm Lead';
+		    } else if ($label == '8') {
+		    	$labeltext = 'Cold Lead';
+		    }
+
+		    $item = (object) array(
+		    	'name' => $deal_title, 
+		    	'email' => $email, 
+		    	'company' => $org,
+		    	'label' => $labeltext,
+		    	'first_name' => $first_name,
+		    	'last_name' => $last_name,
+		    	'addedtags' => $addedtags
+		    );
+		    
+
+
+		    // Add the person to the queue
+		    $queue->createItem($item);
+		  }
+
+
+		  
+
+		  \Drupal::configFactory()->getEditable('pipedrive_api.settings')->set('last_pull', $t)->save();
+ 	  }
+	}
+
+?>
